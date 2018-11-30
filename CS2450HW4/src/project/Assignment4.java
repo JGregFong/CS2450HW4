@@ -29,11 +29,15 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.*;
 
-public class Assignment4 {
+public class Assignment4 extends Application{
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		launch(args);
+	}
+	
+	public void start(Stage myStage) throws Exception{
+		
 	}
 
 }
