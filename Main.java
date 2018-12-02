@@ -8,6 +8,7 @@ import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -125,10 +126,14 @@ public class Main extends Application
 
         VBox sliderVBox = new VBox(10, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, zoomOutButton, zoomInButton);
         sliderVBox.setAlignment(Pos.CENTER);
-        VBox vBox = new VBox(10, subScene, sliderVBox);
-        vBox.setPadding(new Insets(25));
+        
+     GridPane gridPane = new GridPane();
+   	 gridPane.add(subScene , 0, 0);
+   	 gridPane.add( sliderVBox, 1, 0);
+   	 gridPane.setAlignment(Pos. CENTER);
+   	 gridPane.setPadding( new Insets(50));
 
-        Scene myScene = new Scene(vBox);
+        Scene myScene = new Scene(gridPane);
         primaryStage.setScene(myScene);
         primaryStage.show();
     }
