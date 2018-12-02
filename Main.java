@@ -7,7 +7,12 @@ import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -17,6 +22,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Shape3D;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
@@ -35,6 +41,11 @@ public class Main extends Application
     Translate zTransform= new Translate(0,0, zPos);
     Button zoomOutButton= new Button("Zoom Out");
     Button zoomInButton= new Button("Zoom In");
+    Button submitNewShape= new Button("Submit Shape");
+    
+    private Menu fileMenu; // Menus will be built in helper methods so make them fields
+    private Menu textMenu;
+    private Label outputLabel; 
 
     public static void main(String[] args)
     {
@@ -44,7 +55,7 @@ public class Main extends Application
     @Override
     public void start(Stage primaryStage)
     {
-        
+    	
 		Scale scale= new Scale(scaleVal, 1,1 );
         Box box = new Box(30, 50, 30);
         box.setLayoutY(50);
@@ -56,7 +67,19 @@ public class Main extends Application
         });
         box.getTransforms().add(new Translate(10,0,0));
         box.getTransforms().addAll(zTransform, scale, boxRotateX, boxRotateY);
-
+        
+        /*
+        Sphere sphere = new Sphere(10);
+        sphere.setLayoutY(50);
+        sphere.setLayoutX(100);
+        sphere.setMaterial(new PhongMaterial(Color.LIGHTBLUE));
+        selectedShape = sphere;
+        box.setOnMouseClicked(event -> {
+            selectedShape = sphere;
+        });
+        sphere.getTransforms().add(new Translate(10,0,0));
+        sphere.getTransforms().addAll(zTransform, scale, boxRotateX, boxRotateY);
+        */
         
         Cylinder cylinder = new Cylinder(20, 50, 10);
         cylinder.setLayoutX(100);
@@ -69,8 +92,8 @@ public class Main extends Application
         cylinder.getTransforms().addAll(zTransform,scale, cylinderRotateX, cylinderRotateY);
 
         Group shapesGroup = new Group(box, cylinder);
-        SubScene subScene = new SubScene(shapesGroup, 200, 200);
-        subScene.setFill(Color.DARKGREY);
+        SubScene subScene = new SubScene(shapesGroup, 250, 250);
+        subScene.setFill(Color.LAVENDER);
         
         Label scaleLabel= new Label("Scale");
         Slider scaleSldr= new Slider(0.0, 100.0, 50.0);
@@ -123,18 +146,65 @@ public class Main extends Application
                 cylinderRotateY.setAngle((double)newVal);
             }
         });
-
-        VBox sliderVBox = new VBox(10, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, zoomOutButton, zoomInButton);
-        sliderVBox.setAlignment(Pos.CENTER);
         
-     GridPane gridPane = new GridPane();
-   	 gridPane.add(subScene , 0, 0);
-   	 gridPane.add( sliderVBox, 1, 0);
-   	 gridPane.setAlignment(Pos. CENTER);
-   	 gridPane.setPadding( new Insets(50));
+        
+        VBox sliderVBox = new VBox(10, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, zoomOutButton, zoomInButton);
+        HBox shapeBackgroundClr = new HBox(submitNewShape);
+        sliderVBox.setAlignment(Pos.CENTER);
+     
+        
+       
+   
+   
+    /*
+   	final double WIDTH = 300.0, HEIGHT = 200.0;
+    outputLabel = new Label("Hello World");
+    MenuBar menuBar = new MenuBar();
+    buildFileMenu(primaryStage); // helper method to build the "file" menu
+    menuBar.getMenus().addAll( fileMenu, textMenu); // add the instantiated Menus to menuBar
+    BorderPane borderPane = new BorderPane();
+    borderPane.setTop(menuBar);
+    borderPane.setCenter( outputLabel);
+    */
+        
+     // Create the 'root' of the menu system
+        MenuBar menuBar = new MenuBar();
+        // menuBar will have one Menu, titled "File"
+        Menu fileMenu = new Menu("File");
+        menuBar.getMenus().add(fileMenu);
+     // fileMenu will have one MenuItem, titled "Exit"
+        MenuItem saveItem = new MenuItem("Save");
+        fileMenu.getItems().add(saveItem);
+        // fileMenu will have one MenuItem, titled "Exit"
+        MenuItem exitItem = new MenuItem("Exit");
+        fileMenu.getItems().add(exitItem);
+        // Exit the program if the user selects exitItem
+        exitItem.setOnAction(event -> {
+         primaryStage.close();
+        });
 
+   
+    GridPane gridPane = new GridPane();
+     gridPane.add(menuBar , 0, 0);
+  	 gridPane.add(subScene , 0, 1);
+  	 gridPane.add( sliderVBox, 1, 1);
+  	 gridPane.add(shapeBackgroundClr, 0, 2);
+  	 gridPane.setAlignment(Pos. CENTER);
+  	 gridPane.setPadding( new Insets(50));
+  	 
         Scene myScene = new Scene(gridPane);
         primaryStage.setScene(myScene);
         primaryStage.show();
     }
+
+
+private void buildFileMenu(Stage primaryStage)
+{
+ fileMenu = new Menu("File");
+ MenuItem exitItem = new MenuItem("Exit");
+ exitItem.setOnAction(event -> {
+ primaryStage .close();
+ });
+ fileMenu.getItems().add( exitItem);
+}
 }
