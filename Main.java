@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -41,7 +42,8 @@ public class Main extends Application
     Translate zTransform= new Translate(0,0, zPos);
     Button zoomOutButton= new Button("Zoom Out");
     Button zoomInButton= new Button("Zoom In");
-    Button submitNewShape= new Button("Submit Shape");
+    Button submitBackgroundColor= new Button("Submit Background Color");
+    Button addShape= new Button("Add Shape");
     
     private Menu fileMenu; // Menus will be built in helper methods so make them fields
     private Menu textMenu;
@@ -147,9 +149,19 @@ public class Main extends Application
             }
         });
         
-        
+        ChoiceBox<String> myBckGrndColorChoiceBox = new ChoiceBox<>();
+        myBckGrndColorChoiceBox.getItems().add("red");
+        myBckGrndColorChoiceBox.getItems().add("brown");
+        myBckGrndColorChoiceBox.getItems().add("green"); 
         VBox sliderVBox = new VBox(10, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, zoomOutButton, zoomInButton);
-        HBox shapeBackgroundClr = new HBox(submitNewShape);
+        HBox BackgroundClr = new HBox(10, myBckGrndColorChoiceBox, submitBackgroundColor);
+        sliderVBox.setAlignment(Pos.CENTER);
+        
+        ChoiceBox<String> shapesChoiceBox = new ChoiceBox<>();
+        shapesChoiceBox.getItems().add("Sphere");
+        shapesChoiceBox.getItems().add("Box");
+        shapesChoiceBox.getItems().add("Cylinder"); 
+        HBox newShapes = new HBox(40, shapesChoiceBox, addShape);
         sliderVBox.setAlignment(Pos.CENTER);
      
         
@@ -182,17 +194,18 @@ public class Main extends Application
         exitItem.setOnAction(event -> {
          primaryStage.close();
         });
-
-   
-    GridPane gridPane = new GridPane();
+ 
+     GridPane gridPane = new GridPane();
      gridPane.add(menuBar , 0, 0);
   	 gridPane.add(subScene , 0, 1);
   	 gridPane.add( sliderVBox, 1, 1);
-  	 gridPane.add(shapeBackgroundClr, 0, 2);
+  	 gridPane.add(BackgroundClr, 0, 2);
+  	gridPane.add(newShapes, 1, 2);
   	 gridPane.setAlignment(Pos. CENTER);
   	 gridPane.setPadding( new Insets(50));
   	 
         Scene myScene = new Scene(gridPane);
+        myScene.getStylesheets().add("style.css");
         primaryStage.setScene(myScene);
         primaryStage.show();
     }
