@@ -71,8 +71,9 @@ public class Main extends Application
         box.setOnMouseClicked(event -> {
             selectedShape = box;
         });
-        Translating= new Translate(300,100, 0);
-        box.getTransforms().addAll(Translating, scale, boxRotateX, boxRotateY);
+        //Translating= new Translate(300,100, 0);
+        //Translating, 
+        box.getTransforms().addAll(scale, boxRotateX, boxRotateY);
         
    
         Sphere sphere = new Sphere(10);
@@ -83,8 +84,9 @@ public class Main extends Application
         sphere.setOnMouseClicked(event -> {
             selectedShape = sphere;
         });
-        Translating= new Translate(100,50, 0);
-		sphere.getTransforms().addAll(Translating, scale, sphereRotateX, sphereRotateY);
+        //Translating= new Translate(100,50, 0);
+        //Translating,
+		sphere.getTransforms().addAll(scale, sphereRotateX, sphereRotateY);
         
         
         Cylinder cylinder = new Cylinder(20, 50, 10);
@@ -94,8 +96,11 @@ public class Main extends Application
         cylinder.setOnMouseClicked(event -> {
             selectedShape = cylinder;
         });
-        Translating= new Translate(200,70, 0);
-        cylinder.getTransforms().addAll(Translating,scale, cylinderRotateX, cylinderRotateY);
+        
+        
+        //Translating,
+        //Translating= new Translate(200,70, 0);
+        cylinder.getTransforms().addAll(scale, cylinderRotateX, cylinderRotateY);
 
         Group shapesGroup = new Group(box, cylinder, sphere);
         SubScene subScene = new SubScene(shapesGroup, 510, 400);
@@ -104,7 +109,7 @@ public class Main extends Application
         Label scaleLabel= new Label("Scale");
         Slider scaleSldr= new Slider(0.0, 100.0, 50.0);
         scaleSldr.setShowTickLabels(true);
-        scaleSldr.setShowTickMarks(true);
+
         
         scaleSldr.valueProperty().addListener(((observable, oldValue, newValue) ->{
         	double size= (scaleSldr.getValue()) / 50;
@@ -136,6 +141,12 @@ public class Main extends Application
             }
         });
 
+        Label trHLabel = new Label("Translate Horizontally");
+        Slider transHorizontalSlider = new Slider();
+        transHorizontalSlider.setShowTickMarks(true);
+        transHorizontalSlider.setMin(0);
+        transHorizontalSlider.setMax(400);
+        
         Label vLabel = new Label("Rotate Vertically");
         Slider verticalSlider = new Slider();
         verticalSlider.setShowTickMarks(true);
@@ -158,6 +169,12 @@ public class Main extends Application
             }
         });
         
+        Label trVLabel = new Label("Translate Vertically");
+        Slider transVerticalSlider = new Slider();
+        transVerticalSlider.setShowTickMarks(true);
+        transVerticalSlider.setMin(0);
+        transVerticalSlider.setMax(400);
+        
       //DARKGREY,RED, DARKGREEN 
         ChoiceBox<String> shapesColorChoiceBox = new ChoiceBox<>();
         shapesColorChoiceBox.getItems().add("Grey");
@@ -170,7 +187,7 @@ public class Main extends Application
         myBckGrndColorChoiceBox.getItems().add("White");
         myBckGrndColorChoiceBox.getItems().add("Yellow");
         myBckGrndColorChoiceBox.getItems().add("Orange"); 
-        VBox sliderVBox = new VBox(15, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, shapesClr);
+        VBox sliderVBox = new VBox(15, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, shapesClr, trVLabel, transVerticalSlider, trHLabel, transHorizontalSlider);
         HBox BackgroundClr = new HBox(10, myBckGrndColorChoiceBox, submitBackgroundColor);
         sliderVBox.setAlignment(Pos.CENTER);
         
@@ -220,13 +237,13 @@ public class Main extends Application
         Rotate horizontalRotate = new Rotate(30, Rotate.Y_AXIS);
         Rotate verticalRotate = new Rotate(15, Rotate.X_AXIS);
         pCamera.getTransforms().addAll(horizontalRotate, verticalRotate);
-        
+        */
         
         Scene myScene = new Scene(borderPane);
         myScene.getStylesheets().add("style.css");
         primaryStage.setScene(myScene);
         primaryStage.show();
-        */
+    
         
     }
   
