@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
@@ -44,15 +45,13 @@ public class Main extends Application
     Rotate sphereRotateY = new Rotate(0, Rotate.Y_AXIS);
     Rotate cylinderRotateX = new Rotate(0, Rotate.X_AXIS);
     Rotate cylinderRotateY = new Rotate(0, Rotate.Y_AXIS);
-    Translate zTransform= new Translate(0,0, zPos);
-    Button zoomOutButton= new Button("Zoom Out");
-    Button zoomInButton= new Button("Zoom In");
+    Translate Translating= new Translate(50,50, 0);
     Button submitBackgroundColor= new Button("Submit Background Color");
     Button submitShapeColor= new Button("Submit Shape Color");
     Button addShape= new Button("Add Shape");
     
     private Menu fileMenu; // Menus will be built in helper methods so make them fields
-    private Menu textMenu;
+
 
     public static void main(String[] args)
     {
@@ -72,8 +71,8 @@ public class Main extends Application
         box.setOnMouseClicked(event -> {
             selectedShape = box;
         });
-        box.getTransforms().add(new Translate(10,0,0));
-        box.getTransforms().addAll(zTransform, scale, boxRotateX, boxRotateY);
+        Translating= new Translate(300,100, 0);
+        box.getTransforms().addAll(Translating, scale, boxRotateX, boxRotateY);
         
    
         Sphere sphere = new Sphere(10);
@@ -84,8 +83,8 @@ public class Main extends Application
         sphere.setOnMouseClicked(event -> {
             selectedShape = sphere;
         });
-        sphere.getTransforms().add(new Translate(10,0,0));
-		sphere.getTransforms().addAll(zTransform, scale, sphereRotateX, sphereRotateY);
+        Translating= new Translate(100,50, 0);
+		sphere.getTransforms().addAll(Translating, scale, sphereRotateX, sphereRotateY);
         
         
         Cylinder cylinder = new Cylinder(20, 50, 10);
@@ -95,8 +94,8 @@ public class Main extends Application
         cylinder.setOnMouseClicked(event -> {
             selectedShape = cylinder;
         });
-        cylinder.getTransforms().add(new Translate(10,0,0));
-        cylinder.getTransforms().addAll(zTransform,scale, cylinderRotateX, cylinderRotateY);
+        Translating= new Translate(200,70, 0);
+        cylinder.getTransforms().addAll(Translating,scale, cylinderRotateX, cylinderRotateY);
 
         Group shapesGroup = new Group(box, cylinder, sphere);
         SubScene subScene = new SubScene(shapesGroup, 510, 400);
@@ -114,10 +113,7 @@ public class Main extends Application
             scale.setZ(size);
         }));
         
-        zoomInButton.setOnAction(event -> {
-        	 if(zPos < -30) zPos ++;
-        	 zTransform.setZ(zPos);
-        });
+   
         Label hLabel = new Label("Rotate Horizontally");
         Slider horizontalSlider = new Slider();
         horizontalSlider.setShowTickMarks(true);
@@ -174,7 +170,7 @@ public class Main extends Application
         myBckGrndColorChoiceBox.getItems().add("White");
         myBckGrndColorChoiceBox.getItems().add("Yellow");
         myBckGrndColorChoiceBox.getItems().add("Orange"); 
-        VBox sliderVBox = new VBox(15, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, zoomOutButton, zoomInButton, shapesClr);
+        VBox sliderVBox = new VBox(15, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, shapesClr);
         HBox BackgroundClr = new HBox(10, myBckGrndColorChoiceBox, submitBackgroundColor);
         sliderVBox.setAlignment(Pos.CENTER);
         
@@ -208,20 +204,7 @@ public class Main extends Application
          primaryStage.close();
         });
     
-        
-     /*
-     GridPane gridPane = new GridPane();
-     gridPane.add(menuBar , 0, 0);
-  	 gridPane.add(subScene , 0, 1);
-  	 gridPane.add( sliderVBox, 1, 1);
-  	 gridPane.add(BackgroundClr, 0, 3);
-  	 //gridPane.add(shapesClr, 1, 2);
-  	 gridPane.add(newShapes, 1, 3);
-  	 gridPane.setHgap(5);
-  	 gridPane.setVgap(50);
-  	 gridPane.setAlignment(Pos. CENTER);
-  	 gridPane.setPadding( new Insets(100));
-  	 */
+       
         HBox hboxBottom= new HBox(20, BackgroundClr, shapesClr, newShapes);
         hboxBottom.setPadding(new Insets(20,0,20,0));
         buildFileMenu(primaryStage); // helper method to build the "file" menu
@@ -232,10 +215,19 @@ public class Main extends Application
         borderPane.setBottom(hboxBottom);
         borderPane.setPadding(new Insets(0, 20, 80, 20));
         
+        /*
+        PerspectiveCamera pCamera = new PerspectiveCamera( true);
+        Rotate horizontalRotate = new Rotate(30, Rotate.Y_AXIS);
+        Rotate verticalRotate = new Rotate(15, Rotate.X_AXIS);
+        pCamera.getTransforms().addAll(horizontalRotate, verticalRotate);
+        
+        
         Scene myScene = new Scene(borderPane);
         myScene.getStylesheets().add("style.css");
         primaryStage.setScene(myScene);
         primaryStage.show();
+        */
+        
     }
   
     private void createForm()
