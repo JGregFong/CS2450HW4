@@ -182,14 +182,62 @@ public class Main extends Application
         shapesColorChoiceBox.getItems().add("Red"); 
         HBox shapesClr = new HBox(10, shapesColorChoiceBox, submitShapeColor);
       
-      //DARKORANGE, GOLD, WHITE
+        submitShapeColor.setOnAction(event ->{
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Grey") && selectedShape.equals(box)) {
+        		box.setMaterial(new PhongMaterial(Color.DARKGREY));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Green") && selectedShape.equals(box)) {
+        		box.setMaterial(new PhongMaterial(Color.DARKGREEN));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Red") && selectedShape.equals(box)) {
+        		box.setMaterial(new PhongMaterial(Color.RED));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Grey") && selectedShape.equals(cylinder)) {
+        		cylinder.setMaterial(new PhongMaterial(Color.DARKGREY));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Green") && selectedShape.equals(cylinder)) {
+        		cylinder.setMaterial(new PhongMaterial(Color.DARKGREEN));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Red") && selectedShape.equals(cylinder)) {
+        		cylinder.setMaterial(new PhongMaterial(Color.RED));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Grey") && selectedShape.equals(sphere)) {
+        		sphere.setMaterial(new PhongMaterial(Color.DARKGREY));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Green") && selectedShape.equals(sphere)) {
+        		sphere.setMaterial(new PhongMaterial(Color.DARKGREEN));
+        	}
+        	if((shapesColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Red") && selectedShape.equals(sphere)) {
+        		sphere.setMaterial(new PhongMaterial(Color.RED));
+        	}
+        	
+        });
+        
+        
+      //DARKORANGE, GOLD, WHITE  
         ChoiceBox<String> myBckGrndColorChoiceBox = new ChoiceBox<>();
         myBckGrndColorChoiceBox.getItems().add("White");
         myBckGrndColorChoiceBox.getItems().add("Yellow");
         myBckGrndColorChoiceBox.getItems().add("Orange"); 
-        VBox sliderVBox = new VBox(15, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, shapesClr, trVLabel, transVerticalSlider, trHLabel, transHorizontalSlider);
         HBox BackgroundClr = new HBox(10, myBckGrndColorChoiceBox, submitBackgroundColor);
+        
+        submitBackgroundColor.setOnAction(event ->{
+        	if((myBckGrndColorChoiceBox.getSelectionModel().getSelectedItem()).equals("White")) {
+        		subScene.setFill(Color.WHITE);
+        	}
+        	if((myBckGrndColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Yellow")) {
+        		subScene.setFill(Color.GOLD);
+        	}
+        	if((myBckGrndColorChoiceBox.getSelectionModel().getSelectedItem()).equals("Orange")) {
+        		subScene.setFill(Color.DARKORANGE);
+        	}
+        	
+        });
+        
+        VBox sliderVBox = new VBox(15, hLabel, horizontalSlider, vLabel, verticalSlider, scaleLabel, scaleSldr, shapesClr, trVLabel, transVerticalSlider, trHLabel, transHorizontalSlider);
         sliderVBox.setAlignment(Pos.CENTER);
+        
+        
         
         ChoiceBox<String> shapesChoiceBox = new ChoiceBox<>();
         shapesChoiceBox.getItems().add("Sphere");
