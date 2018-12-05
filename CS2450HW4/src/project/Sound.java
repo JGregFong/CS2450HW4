@@ -1,4 +1,3 @@
-
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -52,47 +51,40 @@ public class Sound extends Application{
 	}
 	
 	public void start(Stage myStage) {
-		
-		
-
-		
 		HBox hbox = new HBox(10, playButton, pauseButton, stopButton);
 		Scene myScene = new Scene(hbox);
-		
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio Files (.mp3, .wav)", "*.mp3", "*.wav"));
+
 		myScene.setOnKeyPressed(event ->{
 			if(event.getCode() == KeyCode.O) {
-				FileChooser fileChooser = new FileChooser();
-				
 				File music = fileChooser.showOpenDialog(myStage);
-				fileChooser.getExtensionFilters().add(new ExtensionFilter("MP3", "*.mp3"));
+				
 				if(music != null) {
+					Media musicMedia = new Media(music.toURI().toString());
+			
+					MediaPlayer player = new MediaPlayer(musicMedia);
 					
-					musicFile = music;
+					playButton.setOnAction(e ->{
+						player.stop();
+						player.play();
+						e.consume();
+					});
+					
+					pauseButton.setOnAction(e ->{
+						player.pause();
+						e.consume();
+					});
+					
+					stopButton.setOnAction(e ->{
+						player.stop();
+						e.consume();
+					});		
 				}
 				
 			}
 		});
-		
-		if(musicFile != null) {
-			Media musicMedia = new Media(musicFile.toURI().toString());
-			
-			MediaPlayer player = new MediaPlayer(musicMedia);
-			
-			playButton.setOnAction(event ->{
-				player.stop();
-				player.play();
-			});
-			
-			pauseButton.setOnAction(event ->{
-				player.pause();
-			});
-			
-			stopButton.setOnAction(event ->{
-				player.stop();
-			});			
-		}
 
-		
 		myStage.setScene(myScene);
 		
 		myStage.show();
