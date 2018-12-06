@@ -320,16 +320,22 @@ public class Main extends Application
             @Override
             public void handle(Event event) {
                 if (selectedShape != null) {
+                    // Rotate xCopy = xRotate.clone();
                     selectedShape.getTransforms().removeAll(xRotate, yRotate, zRotate, scale, translate);
-                    selectedShape.getTransforms().add(new Scale(scale.getX(), scale.getY(), scale.getZ()));
+                    selectedShape.getTransforms().addAll(
+                        xRotate.clone(),
+                        yRotate.clone(),
+                        zRotate.clone(),
+                        scale.clone(),
+                        translate.clone()
+                    );
                     scale = new Scale();
+                    translate = new Translate();
+                    xRotate = new Rotate(0, Rotate.X_AXIS);
+                    yRotate = new Rotate(0, Rotate.Y_AXIS);
+                    zRotate = new Rotate(0, Rotate.Z_AXIS);
                 }
                 selectedShape = (Shape3D) event.getSource();
-                // translate = new Translate(
-                //     selectedShape.getTranslateX(),
-                //     selectedShape.getTranslateY(),
-                //     selectedShape.getTranslateZ()
-                // );
                 selectedShape.getTransforms().addAll(xRotate, yRotate, zRotate, scale, translate);
             }
         };
