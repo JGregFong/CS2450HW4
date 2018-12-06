@@ -24,5 +24,5 @@ hs_err_pid*
 
 
 #Stuff from VSCode
-.json
-.mf
+*.json
+*.mf
