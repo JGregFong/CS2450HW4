@@ -1,5 +1,11 @@
+package project;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javafx.animation.RotateTransition;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
@@ -31,6 +37,7 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.scene.*;
 import javafx.event.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class Main extends Application
@@ -402,4 +409,67 @@ public class Main extends Application
         });
         fileMenu.getItems().add( exitItem);
     }
+    
+    public void saveShapes(ObservableList<Node> children) {
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle("Saving 3D Shapes");
+    	File file = fileChooser.showSaveDialog(new Stage());
+    	try {
+    		FileWriter writer = new FileWriter(file);
+    		if(file != null) {
+    			children.stream().filter(child-> child.getId() != null).forEach(child ->{
+    				if(child instanceof Shape3D) {
+    					if(child instanceof Box) {
+    						try {
+    							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
+    							String dimensions = ((Box) child).getHeight() + " " + ((Box) child).getWidth() + " " + ((Box) child).getDepth();
+    							String scale = ((Box) child).getScaleX() + " "+ ((Box)child).getScaleY() + " "+ ((Box)child).getScaleZ();
+    							String rotation = Double.toString(((Box)child).getRotate());
+    									
+    							writer.write("Box " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + " "+ scale + " "+ rotation + "\n");
+
+    						} catch (IOException e) {
+    							// TODO Auto-generated catch block
+    							e.printStackTrace();
+    						}
+    					}
+    					else if (child instanceof Sphere) {
+    						try {
+    							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
+    							double dimensions = ((Sphere) child).getRadius();
+    							String scale = ((Sphere) child).getScaleX() + " "+ ((Sphere)child).getScaleY() + " "+ ((Sphere)child).getScaleZ();
+    							String rotation = Double.toString(((Sphere)child).getRotate());
+    							
+    							writer.write("Sphere " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + " "+ scale + " "+ rotation+ "\n");
+
+    						} catch (IOException e) {
+    							// TODO Auto-generated catch block
+    							e.printStackTrace();
+    						}
+    					}
+    					else if (child instanceof Cylinder) {
+    						try {
+    							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
+    							String dimensions = ((Cylinder)child).getHeight()+ " " + ((Cylinder) child).getRadius();
+    							String scale = ((Cylinder) child).getScaleX() + " "+ ((Cylinder)child).getScaleY() + " "+ ((Cylinder)child).getScaleZ();
+    							String rotation = Double.toString(((Cylinder)child).getRotate());
+    							
+    							writer.write("Cylinder " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial()+ " "+ scale + " "+ rotation + "\n");
+
+    						} catch (IOException e) {
+    							// TODO Auto-generated catch block
+    							e.printStackTrace();
+    						}
+    					}
+    				}
+    			});
+    		}		
+    		
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+
+    }
+
 }
