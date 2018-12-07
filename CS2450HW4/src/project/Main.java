@@ -356,7 +356,10 @@ public void saveShapes(ObservableList<Node> children) {
 						try {
 							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
 							String dimensions = ((Box) child).getHeight() + " " + ((Box) child).getWidth() + " " + ((Box) child).getDepth();
-							writer.write("Box " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + "\n");
+							String scale = ((Box) child).getScaleX() + " "+ ((Box)child).getScaleY() + " "+ ((Box)child).getScaleZ();
+							String rotation = Double.toString(((Box)child).getRotate());
+									
+							writer.write("Box " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + " "+ scale + " "+ rotation + "\n");
 
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -367,7 +370,10 @@ public void saveShapes(ObservableList<Node> children) {
 						try {
 							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
 							double dimensions = ((Sphere) child).getRadius();
-							writer.write("Sphere " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + "\n");
+							String scale = ((Sphere) child).getScaleX() + " "+ ((Sphere)child).getScaleY() + " "+ ((Sphere)child).getScaleZ();
+							String rotation = Double.toString(((Sphere)child).getRotate());
+							
+							writer.write("Sphere " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + " "+ scale + " "+ rotation+ "\n");
 
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -378,7 +384,10 @@ public void saveShapes(ObservableList<Node> children) {
 						try {
 							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
 							String dimensions = ((Cylinder)child).getHeight()+ " " + ((Cylinder) child).getRadius();
-							writer.write("Cylinder " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + "\n");
+							String scale = ((Cylinder) child).getScaleX() + " "+ ((Cylinder)child).getScaleY() + " "+ ((Cylinder)child).getScaleZ();
+							String rotation = Double.toString(((Cylinder)child).getRotate());
+							
+							writer.write("Cylinder " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial()+ " "+ scale + " "+ rotation + "\n");
 
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -393,6 +402,7 @@ public void saveShapes(ObservableList<Node> children) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+
 }
 
 
