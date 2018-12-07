@@ -38,6 +38,7 @@ import javafx.scene.transform.Translate;
 import javafx.scene.*;
 import javafx.event.*;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class Main extends Application
@@ -238,6 +239,12 @@ public class Main extends Application
         // fileMenu will have one MenuItem, titled "Exit"
         MenuItem exitItem = new MenuItem("Exit");
         fileMenu.getItems().add(exitItem);
+        
+        // Save shapes in scene.
+        saveItem.setOnAction(event ->{
+        	saveShapes(shapesGroup.getChildren());
+        });
+        
         // Exit the program if the user selects exitItem
         exitItem.setOnAction(event -> {
             primaryStage.close();
@@ -412,49 +419,53 @@ public class Main extends Application
     
     public void saveShapes(ObservableList<Node> children) {
     	FileChooser fileChooser = new FileChooser();
+    	fileChooser.getExtensionFilters().add(new ExtensionFilter("Text File", "*.txt"));
     	fileChooser.setTitle("Saving 3D Shapes");
     	File file = fileChooser.showSaveDialog(new Stage());
+    	
+
+    	
     	try {
     		FileWriter writer = new FileWriter(file);
     		if(file != null) {
-    			children.stream().filter(child-> child.getId() != null).forEach(child ->{
-    				if(child instanceof Shape3D) {
-    					if(child instanceof Box) {
+    			for(int i = 0; i<children.size(); i++){
+    				System.out.print(children.get(i).toString());
+    					if(children.get(i).toString().charAt(0) == 'B') {
     						try {
-    							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
-    							String dimensions = ((Box) child).getHeight() + " " + ((Box) child).getWidth() + " " + ((Box) child).getDepth();
-    							String scale = ((Box) child).getScaleX() + " "+ ((Box)child).getScaleY() + " "+ ((Box)child).getScaleZ();
-    							String rotation = Double.toString(((Box)child).getRotate());
+    							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
+    							String dimensions = ((Box) children.get(i)).getHeight() + " " + ((Box) children.get(i)).getWidth() + " " + ((Box) children.get(i)).getDepth();
+    							String scale = ((Box) children.get(i)).getScaleX() + " "+ ((Box)children.get(i)).getScaleY() + " "+ ((Box)children.get(i)).getScaleZ();
+    							String rotation = Double.toString(((Box)children.get(i)).getRotate());
     									
-    							writer.write("Box " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + " "+ scale + " "+ rotation + "\n");
+    							writer.write("Box " + position + " " + dimensions + " " + ((Shape3D) children.get(i)).getMaterial() + " "+ scale + " "+ rotation + "\n");
 
     						} catch (IOException e) {
     							// TODO Auto-generated catch block
     							e.printStackTrace();
     						}
     					}
-    					else if (child instanceof Sphere) {
+    					else if (children.get(i).toString().charAt(0) == 'S') {
     						try {
-    							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
-    							double dimensions = ((Sphere) child).getRadius();
-    							String scale = ((Sphere) child).getScaleX() + " "+ ((Sphere)child).getScaleY() + " "+ ((Sphere)child).getScaleZ();
-    							String rotation = Double.toString(((Sphere)child).getRotate());
+    							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
+    							double dimensions = ((Sphere) children.get(i)).getRadius();
+    							String scale = ((Sphere) children.get(i)).getScaleX() + " "+ ((Sphere)children.get(i)).getScaleY() + " "+ ((Sphere)children.get(i)).getScaleZ();
+    							String rotation = Double.toString(((Sphere)children.get(i)).getRotate());
     							
-    							writer.write("Sphere " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial() + " "+ scale + " "+ rotation+ "\n");
+    							writer.write("Sphere " + position + " " + dimensions + " " + ((Shape3D) children.get(i)).getMaterial() + " "+ scale + " "+ rotation+ "\n");
 
     						} catch (IOException e) {
     							// TODO Auto-generated catch block
     							e.printStackTrace();
     						}
     					}
-    					else if (child instanceof Cylinder) {
+    					else if (children.get(i).toString().charAt(0) == 'C') {
     						try {
-    							String position = child.getTranslateX() + " " + child.getTranslateY() + " " + child.getTranslateZ();
-    							String dimensions = ((Cylinder)child).getHeight()+ " " + ((Cylinder) child).getRadius();
-    							String scale = ((Cylinder) child).getScaleX() + " "+ ((Cylinder)child).getScaleY() + " "+ ((Cylinder)child).getScaleZ();
-    							String rotation = Double.toString(((Cylinder)child).getRotate());
+    							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
+    							String dimensions = ((Cylinder)children.get(i)).getHeight()+ " " + ((Cylinder) children.get(i)).getRadius();
+    							String scale = ((Cylinder) children.get(i)).getScaleX() + " "+ ((Cylinder)children.get(i)).getScaleY() + " "+ ((Cylinder)children.get(i)).getScaleZ();
+    							String rotation = Double.toString(((Cylinder)children.get(i)).getRotate());
     							
-    							writer.write("Cylinder " + position + " " + dimensions + " " + ((Shape3D) child).getMaterial()+ " "+ scale + " "+ rotation + "\n");
+    							writer.write("Cylinder " + position + " " + dimensions + " " + ((Shape3D) children.get(i)).getMaterial()+ " "+ scale + " "+ rotation + "\n");
 
     						} catch (IOException e) {
     							// TODO Auto-generated catch block
@@ -462,13 +473,16 @@ public class Main extends Application
     						}
     					}
     				}
-    			});
-    		}		
+    			}
+
+    		writer.close();
     		
     	} catch (IOException e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
     	}
+
+    	System.out.print(children.toString());
 
     }
 
