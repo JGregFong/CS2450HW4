@@ -476,7 +476,7 @@ public class Main extends Application
     						try {
     							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
     							String dimensions = ((Box) children.get(i)).getHeight() + " " + ((Box) children.get(i)).getWidth() + " " + ((Box) children.get(i)).getDepth();
-    							String color = ((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor().toString();
+    							String color = colorDetector(((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor());
     							String scale = ((Box) children.get(i)).getScaleX() + " "+ ((Box)children.get(i)).getScaleY() + " "+ ((Box)children.get(i)).getScaleZ();
     							String rotation = Double.toString(((Box)children.get(i)).getRotate());
     							
@@ -493,7 +493,7 @@ public class Main extends Application
     						try {
     							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
     							double dimensions = ((Sphere) children.get(i)).getRadius();
-    							String color = ((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor().toString();
+    							String color = colorDetector(((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor());
     							String scale = ((Sphere) children.get(i)).getScaleX() + " "+ ((Sphere)children.get(i)).getScaleY() + " "+ ((Sphere)children.get(i)).getScaleZ();
     							String rotation = Double.toString(((Sphere)children.get(i)).getRotate());
     							
@@ -509,7 +509,7 @@ public class Main extends Application
     						try {
     							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
     							String dimensions = ((Cylinder)children.get(i)).getHeight()+ " " + ((Cylinder) children.get(i)).getRadius();
-    							String color = ((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor().toString();
+    							String color = colorDetector(((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor());
     							String scale = ((Cylinder) children.get(i)).getScaleX() + " "+ ((Cylinder)children.get(i)).getScaleY() + " "+ ((Cylinder)children.get(i)).getScaleZ();
     							String rotation = Double.toString(((Cylinder)children.get(i)).getRotate());
     							
@@ -532,6 +532,23 @@ public class Main extends Application
     	}
 
     	System.out.print(children.toString());
+
+    }
+    
+    public String colorDetector(Color color) {
+    	
+    	if(color.equals(Color.RED)) {
+    		return "red";
+    	}
+    	else if(color.equals(Color.GREEN)) {
+    		return "green";
+    	}
+    	else if(color.equals(Color.GRAY)) {
+    		return "gray";
+    	}
+    	else {
+    		return "pink";
+    	}
 
     }
 
