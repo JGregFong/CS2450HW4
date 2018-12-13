@@ -1,4 +1,4 @@
-package project;
+// package project;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,6 +52,14 @@ public class Main extends Application
     Button submitShapeColor= new Button("Submit Shape Color");
     Button addShape= new Button("Add Shape");
 
+    Slider horizontalSlider;
+    Slider verticalSlider;
+    Slider zSlider;
+    Slider xTranslateSlider;
+    Slider yTranslateSlider;
+    Slider zTranslateSlider;
+    Slider scaleSldr;
+
     Group shapesGroup = new Group();
     Rotate xRotate = new Rotate(0, Rotate.X_AXIS);
     Rotate yRotate = new Rotate(0, Rotate.Y_AXIS);
@@ -81,12 +89,12 @@ public class Main extends Application
         subScene.setCamera(pCam);
         
         Label scaleLabel= new Label("Scale");
-        Slider scaleSldr= new Slider(0.0, 100.0, 50.0);
+        scaleSldr= new Slider(0.0, 2, 1);
         scaleSldr.setShowTickLabels(true);
         scaleSldr.setShowTickMarks(true);
         
         scaleSldr.valueProperty().addListener(((observable, oldValue, newValue) ->{
-        	double size= (scaleSldr.getValue()) / 50;
+        	double size= scaleSldr.getValue();
         	scale.setY(size);
             scale.setX(size);
             scale.setZ(size);
@@ -103,7 +111,7 @@ public class Main extends Application
         });
         
         Label hLabel = new Label("Rotate Along X-Axis");
-        Slider horizontalSlider = new Slider();
+        horizontalSlider = new Slider();
         horizontalSlider.setShowTickMarks(true);
         horizontalSlider.setMin(0);
         horizontalSlider.setMax(360);
@@ -113,7 +121,7 @@ public class Main extends Application
         });
 
         Label vLabel = new Label("Rotate Along Y-Axis");
-        Slider verticalSlider = new Slider();
+        verticalSlider = new Slider();
         verticalSlider.setShowTickMarks(true);
         verticalSlider.setMin(0);
         verticalSlider.setMax(360);
@@ -123,7 +131,7 @@ public class Main extends Application
         });
         
         Label zLabel = new Label("Rotate Along Z-Axis");
-        Slider zSlider = new Slider();
+        zSlider = new Slider();
         zSlider.setShowTickMarks(true);
         zSlider.setMin(0);
         zSlider.setMax(360);
@@ -133,7 +141,7 @@ public class Main extends Application
         });
 
         Label xTranslateLabel = new Label("Translate Along X-Axis");
-        Slider xTranslateSlider = new Slider();
+        xTranslateSlider = new Slider();
         xTranslateSlider.setShowTickMarks(true);
         xTranslateSlider.setMin(-100);
         xTranslateSlider.setMax(100);
@@ -143,7 +151,7 @@ public class Main extends Application
         });
 
         Label yTranslateLabel = new Label("Translate Along Y-Axis");
-        Slider yTranslateSlider = new Slider();
+        yTranslateSlider = new Slider();
         yTranslateSlider.setShowTickMarks(true);
         yTranslateSlider.setMin(-100);
         yTranslateSlider.setMax(100);
@@ -153,7 +161,7 @@ public class Main extends Application
         });
 
         Label zTranslateLabel = new Label("Translate Along Z-Axis");
-        Slider zTranslateSlider = new Slider();
+        zTranslateSlider = new Slider();
         zTranslateSlider.setShowTickMarks(true);
         zTranslateSlider.setMin(-100);
         zTranslateSlider.setMax(100);
@@ -289,7 +297,12 @@ public class Main extends Application
         Label zLabel = new Label("Z Location:");
         TextField zText = new TextField("");
         lengthText.setTooltip( new Tooltip("Please enter a valid Z coordinate"));
-        
+
+        //DARKGREY,RED, DARKGREEN 
+        ChoiceBox<String> shapesColorChoiceBox = new ChoiceBox<>();
+        shapesColorChoiceBox.getItems().add("Grey");
+        shapesColorChoiceBox.getItems().add("Green");
+        shapesColorChoiceBox.getItems().add("Red"); 
 
         gridPane.add(widthLabel, 0, 0);
         gridPane.add(widthText, 1, 0);
@@ -311,7 +324,7 @@ public class Main extends Application
         gridPane.setVgap( 10);
         Button submit = new Button("Submit");
         Button cancel = new Button("Cancel");
-        VBox vbox = new VBox(10, label, gridPane, submit, cancel);
+        VBox vbox = new VBox(10, label, gridPane, shapesColorChoiceBox, submit, cancel);
         vbox.setAlignment(Pos. CENTER);
         vbox.setPadding( new Insets(25));
         BorderPane borderPane = new BorderPane(vbox);
@@ -327,23 +340,40 @@ public class Main extends Application
             @Override
             public void handle(Event event) {
                 if (selectedShape != null) {
-                    // Rotate xCopy = xRotate.clone();
-                    selectedShape.getTransforms().removeAll(xRotate, yRotate, zRotate, scale, translate);
+                    selectedShape.getTransforms().clear();
                     selectedShape.getTransforms().addAll(
+                        translate.clone(),
                         xRotate.clone(),
                         yRotate.clone(),
                         zRotate.clone(),
-                        scale.clone(),
-                        translate.clone()
+                        scale.clone()
                     );
-                    scale = new Scale();
-                    translate = new Translate();
+                }
+                selectedShape = (Shape3D) event.getSource();
+                
+                if (selectedShape.getTransforms().size() != 0) {
+                    scale = (Scale) selectedShape.getTransforms().get(4);
+                    translate = (Translate) selectedShape.getTransforms().get(0);
+                    xRotate = (Rotate) selectedShape.getTransforms().get(1);
+                    yRotate = (Rotate) selectedShape.getTransforms().get(2);
+                    zRotate = (Rotate) selectedShape.getTransforms().get(3);
+                    selectedShape.getTransforms().clear();
+                } else {
                     xRotate = new Rotate(0, Rotate.X_AXIS);
                     yRotate = new Rotate(0, Rotate.Y_AXIS);
                     zRotate = new Rotate(0, Rotate.Z_AXIS);
+                    scale = new Scale(1, 1, 1);
+                    translate = new Translate();
                 }
-                selectedShape = (Shape3D) event.getSource();
-                selectedShape.getTransforms().addAll(xRotate, yRotate, zRotate, scale, translate);
+                selectedShape.getTransforms().addAll(translate, xRotate, yRotate, zRotate, scale);
+
+                horizontalSlider.valueProperty().set(xRotate.getAngle());
+                verticalSlider.valueProperty().set(yRotate.getAngle());
+                zSlider.valueProperty().set(zRotate.getAngle());
+                xTranslateSlider.valueProperty().set(translate.getX());
+                yTranslateSlider.valueProperty().set(translate.getY());
+                zTranslateSlider.valueProperty().set(translate.getZ());
+                scaleSldr.valueProperty().set(scale.getX());
             }
         };
 
@@ -351,14 +381,18 @@ public class Main extends Application
             switch (shape){
                 case "Sphere": {
                     Sphere  sphere= new Sphere(Double.valueOf(radiusText.getText()));
-                    sphere.getTransforms().add(new Translate(
-                        Double.valueOf(xText.getText()),
-                        Double.valueOf(yText.getText()),
-                        Double.valueOf(zText.getText())
-                    ));
+                    sphere.translateXProperty().set(Double.valueOf(xText.getText()));
+                    sphere.translateYProperty().set(Double.valueOf(yText.getText()));
+                    sphere.translateZProperty().set(Double.valueOf(zText.getText()));
                     sphere.setOnMouseClicked(e);
-                    sphere.setMaterial(new PhongMaterial(Color.GREEN));
-
+                    if (shapesColorChoiceBox.getValue().equals("Green")) {
+                        sphere.setMaterial(new PhongMaterial(Color.GREEN));
+                    } else if (shapesColorChoiceBox.getValue().equals("Red")) {
+                        sphere.setMaterial(new PhongMaterial(Color.RED));
+                    } else {
+                        sphere.setMaterial(new PhongMaterial(Color.GREY));
+                    }
+ 
                     shapesGroup.getChildren().add(sphere);
                     break;
                 }
@@ -367,13 +401,17 @@ public class Main extends Application
                         Double.valueOf(heightText.getText()),
                         Double.valueOf(lengthText.getText())
                     );
-                    box.getTransforms().add(new Translate(
-                        Double.valueOf(xText.getText()),
-                        Double.valueOf(yText.getText()),
-                        Double.valueOf(zText.getText())
-                    ));
+                    box.translateXProperty().set(Double.valueOf(xText.getText()));
+                    box.translateYProperty().set(Double.valueOf(yText.getText()));
+                    box.translateZProperty().set(Double.valueOf(zText.getText()));
                     box.setOnMouseClicked(e);
-                    box.setMaterial(new PhongMaterial(Color.GREEN));
+                    if (shapesColorChoiceBox.getValue().equals("Green")) {
+                        box.setMaterial(new PhongMaterial(Color.GREEN));
+                    } else if (shapesColorChoiceBox.getValue().equals("Red")) {
+                        box.setMaterial(new PhongMaterial(Color.RED));
+                    } else {
+                        box.setMaterial(new PhongMaterial(Color.GREY));
+                    }
 
                     shapesGroup.getChildren().add(box);
                     break;
@@ -383,13 +421,17 @@ public class Main extends Application
                         Double.valueOf(radiusText.getText()),
                         Double.valueOf(heightText.getText())
                     );
-                    cylinder.getTransforms().add(new Translate(
-                        Double.valueOf(xText.getText()),
-                        Double.valueOf(yText.getText()),
-                        Double.valueOf(zText.getText())
-                    ));
+                    cylinder.translateXProperty().set(Double.valueOf(xText.getText()));
+                    cylinder.translateYProperty().set(Double.valueOf(yText.getText()));
+                    cylinder.translateZProperty().set(Double.valueOf(zText.getText()));
                     cylinder.setOnMouseClicked(e);
-                    cylinder.setMaterial(new PhongMaterial(Color.GREEN));
+                    if (shapesColorChoiceBox.getValue().equals("Green")) {
+                        cylinder.setMaterial(new PhongMaterial(Color.GREEN));
+                    } else if (shapesColorChoiceBox.getValue().equals("Red")) {
+                        cylinder.setMaterial(new PhongMaterial(Color.RED));
+                    } else {
+                        cylinder.setMaterial(new PhongMaterial(Color.GREY));
+                    }
 
                     shapesGroup.getChildren().add(cylinder);
                     break;
