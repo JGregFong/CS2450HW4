@@ -1,8 +1,10 @@
 package project;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -252,20 +254,29 @@ public class Main extends Application
         // menuBar will have one Menu, titled "File"
         Menu fileMenu = new Menu("File");
         menuBar.getMenus().add(fileMenu);
+        // fileMenu will have one MenuItem, titled "New"
+        MenuItem newItem = new MenuItem("New");
+        fileMenu.getItems().add(newItem);
+        // fileMenu will have one MenuItem, titled "Load"
         MenuItem loadItem = new MenuItem("Load");
         fileMenu.getItems().add(loadItem);
-        // fileMenu will have one MenuItem, titled "Exit"
+        // fileMenu will have one MenuItem, titled "Save"
         MenuItem saveItem = new MenuItem("Save");
         fileMenu.getItems().add(saveItem);
         // fileMenu will have one MenuItem, titled "Exit"
         MenuItem exitItem = new MenuItem("Exit");
         fileMenu.getItems().add(exitItem);
         
-
+        // New shapes scene
+        newItem.setOnAction(event -> {
+        	shapesGroup.getChildren().clear();
+        });
+        
         // Load shapes into scene
         loadItem.setOnAction(event -> {
         	loadShapes();
         });
+        
         // Save shapes in scene.
         saveItem.setOnAction(event ->{
         	saveShapes(shapesGroup.getChildren());
@@ -491,7 +502,6 @@ public class Main extends Application
     		if(file != null) {
     			writer.write("SHAPES_3D\r\n");
     			for(int i = 0; i<children.size(); i++){
-    				System.out.println(children.get(i).toString());
     					if(children.get(i).toString().charAt(0) == 'B') {
     						try {
     							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
@@ -561,13 +571,24 @@ public class Main extends Application
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.getExtensionFilters().add(new ExtensionFilter("Text File", "*.txt"));
     	fileChooser.setTitle("Loading 3D Shapes");
-    	File file = fileChooser.showSaveDialog(new Stage());
-    	
+    	File file = fileChooser.showOpenDialog(new Stage());
+
     	try {
     		FileReader reader = new FileReader(file);
-    		if(file != null) {
-    			Scanner scanner = new Scanner(reader.toString());
-    			StringBuilder stringBuilder = new StringBuilder();
+    		
+    		StringBuilder sb = new StringBuilder();
+    		BufferedReader bufferedReader = new BufferedReader(reader);
+    		String s;
+    		
+    		while((s = bufferedReader.readLine()) != null)
+            {
+                sb.append(s).append("\n");
+            }
+    		
+    		bufferedReader.close();
+    		
+    		if(!sb.toString().equals("")) {
+    			Scanner scanner = new Scanner(sb.toString());
     			String line = null;
     			boolean validFile = false;
     			
@@ -588,40 +609,108 @@ public class Main extends Application
     				shapesGroup.getChildren().clear();
     				
     				String[] temp = line.split(" ");
-    				
+    			
     				if(temp[0].equals("Sphere"))
     				{
-    					// 15 total Elements in temp
-    					String[] positions = Arrays.copyOfRange(temp, 1, 3);
+    					// 10 total Elements in temp
+    					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					double dimensions = Double.parseDouble(temp[4]);
-    					String[] material = Arrays.copyOfRange(temp, 5, 11);
-    					String[] scales = Arrays.copyOfRange(temp, 12, 14);
-    					double rotation = Double.parseDouble(temp[15]);
+    					String material = temp[5];
+    					String[] scales = Arrays.copyOfRange(temp, 6, 9);
+    					double rotation = Double.parseDouble(temp[9]);
+    					
+    					Sphere sphere = new Sphere(dimensions);
+                        sphere.translateXProperty().set(Double.valueOf(positions[0]));
+                        sphere.translateYProperty().set(Double.valueOf(positions[1]));
+                        sphere.translateZProperty().set(Double.valueOf(positions[2]));
+                        
+                        if (material.equals("green")){
+                            sphere.setMaterial(new PhongMaterial(Color.GREEN));
+                        } else if (material.equals("red")) {
+                            sphere.setMaterial(new PhongMaterial(Color.RED));
+                        } else {
+                            sphere.setMaterial(new PhongMaterial(Color.GREY));
+                            System.out.println("FAILED");
+                        }
+                        
+                        sphere.setScaleX(Double.valueOf(scales[0]));
+                        sphere.setScaleY(Double.valueOf(scales[1]));
+                        sphere.setScaleZ(Double.valueOf(scales[2]));
+                        sphere.setRotate(rotation);
+                        
+                        shapesGroup.getChildren().add(sphere);
     				}
     				else if(temp[0].equals("Box"))
     				{
-    					// 18 total Elements in temp
-    					String[] positions = Arrays.copyOfRange(temp, 1, 3);
-    					String[] dimensions = Arrays.copyOfRange(temp, 4, 6);
-    					String[] material = Arrays.copyOfRange(temp, 7, 13);
-    					String[] scales = Arrays.copyOfRange(temp, 14, 16);
-    					double rotation = Double.parseDouble(temp[17]);
+    					// 12 total Elements in temp
+    					String[] positions = Arrays.copyOfRange(temp, 1, 4);
+    					String[] dimensions = Arrays.copyOfRange(temp, 4, 7);
+    					String material = temp[7];
+    					String[] scales = Arrays.copyOfRange(temp, 8, 11);
+    					double rotation = Double.parseDouble(temp[11]);
+    					
+    					Box box = new Box(Double.valueOf(dimensions[0]),
+    	                        Double.valueOf(dimensions[1]),
+    	                        Double.valueOf(dimensions[2]));
+
+    					box.translateXProperty().set(Double.valueOf(positions[0]));
+    					box.translateYProperty().set(Double.valueOf(positions[1]));
+    					box.translateZProperty().set(Double.valueOf(positions[2]));
+    					
+    					if (material.equals("green")) {
+    						box.setMaterial(new PhongMaterial(Color.GREEN));
+    					} else if (material.equals("red")) {
+    						box.setMaterial(new PhongMaterial(Color.RED));
+    					} else {
+    						box.setMaterial(new PhongMaterial(Color.GREY));
+    					}
+    					
+    					box.setScaleX(Double.valueOf(scales[0]));
+    					box.setScaleY(Double.valueOf(scales[1]));
+    					box.setScaleZ(Double.valueOf(scales[2]));
+    					box.setRotate(rotation);
+    					shapesGroup.getChildren().add(box);
     				}
     				else if(temp[0].equals("Cylinder"))
     				{
-    					// 17 total Elements in temp
-    					String[] positions = Arrays.copyOfRange(temp, 1, 3);
-    					String[] dimensions = Arrays.copyOfRange(temp, 4, 5);
-    					String[] material = Arrays.copyOfRange(temp, 6, 12);
-    					String[] scales = Arrays.copyOfRange(temp, 13, 15);
-    					double rotation = Double.parseDouble(temp[16]);
+    					// 11 total Elements in temp
+    					String[] positions = Arrays.copyOfRange(temp, 1, 4);
+    					String[] dimensions = Arrays.copyOfRange(temp, 4, 6);
+    					String material = temp[6];
+    					String[] scales = Arrays.copyOfRange(temp, 7, 10);
+    					double rotation = Double.parseDouble(temp[10]);
+    					
+    					Cylinder cylinder = new Cylinder(
+    	                        Double.valueOf(dimensions[0]),
+    	                        Double.valueOf(dimensions[1]));
+    					
+    					cylinder.translateXProperty().set(Double.valueOf(positions[0]));
+    					cylinder.translateYProperty().set(Double.valueOf(positions[1]));
+    					cylinder.translateZProperty().set(Double.valueOf(positions[2]));
+    					
+    					if (material.equals("green")) {
+    						cylinder.setMaterial(new PhongMaterial(Color.GREEN));
+    					} else if (material.equals("red")) {
+    						cylinder.setMaterial(new PhongMaterial(Color.RED));
+    					} else {
+    						cylinder.setMaterial(new PhongMaterial(Color.GREY));
+    					}
+    					
+    					cylinder.setScaleX(Double.valueOf(scales[0]));
+    					cylinder.setScaleY(Double.valueOf(scales[1]));
+    					cylinder.setScaleZ(Double.valueOf(scales[2]));
+    					cylinder.setRotate(rotation);
+    					shapesGroup.getChildren().add(cylinder);
     				}
-    				else
+    				
+    				if(line.isEmpty())
     				{
-    					// No more shapes to parse
-    					break;
+    					break; // Nothing else to parse
     				}
     			}
+    			
+    			scanner.close();
+    			
     		}
 
     		reader.close();
