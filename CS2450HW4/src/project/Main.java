@@ -1,7 +1,10 @@
 package project;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
 
 import javafx.animation.RotateTransition;
 import javafx.application.Application;
@@ -90,11 +93,13 @@ public class Main extends Application
         subScene.setCamera(pCam);
         
         Label scaleLabel= new Label("Scale");
+
         scaleSldr= new Slider(0.0, 2, 1);
         scaleSldr.setShowTickLabels(true);
         scaleSldr.setShowTickMarks(true);
         
         scaleSldr.valueProperty().addListener(((observable, oldValue, newValue) ->{
+
         	double size= scaleSldr.getValue();
         	scale.setY(size);
             scale.setX(size);
@@ -112,6 +117,7 @@ public class Main extends Application
         });
         
         Label hLabel = new Label("Rotate Along X-Axis");
+
         horizontalSlider = new Slider();
         horizontalSlider.setShowTickMarks(true);
         horizontalSlider.setMin(0);
@@ -122,6 +128,7 @@ public class Main extends Application
         });
 
         Label vLabel = new Label("Rotate Along Y-Axis");
+
         verticalSlider = new Slider();
         verticalSlider.setShowTickMarks(true);
         verticalSlider.setMin(0);
@@ -132,6 +139,7 @@ public class Main extends Application
         });
         
         Label zLabel = new Label("Rotate Along Z-Axis");
+
         zSlider = new Slider();
         zSlider.setShowTickMarks(true);
         zSlider.setMin(0);
@@ -142,6 +150,7 @@ public class Main extends Application
         });
 
         Label xTranslateLabel = new Label("Translate Along X-Axis");
+
         xTranslateSlider = new Slider();
         xTranslateSlider.setShowTickMarks(true);
         xTranslateSlider.setMin(-100);
@@ -152,6 +161,7 @@ public class Main extends Application
         });
 
         Label yTranslateLabel = new Label("Translate Along Y-Axis");
+
         yTranslateSlider = new Slider();
         yTranslateSlider.setShowTickMarks(true);
         yTranslateSlider.setMin(-100);
@@ -162,6 +172,7 @@ public class Main extends Application
         });
 
         Label zTranslateLabel = new Label("Translate Along Z-Axis");
+
         zTranslateSlider = new Slider();
         zTranslateSlider.setShowTickMarks(true);
         zTranslateSlider.setMin(-100);
@@ -241,6 +252,8 @@ public class Main extends Application
         // menuBar will have one Menu, titled "File"
         Menu fileMenu = new Menu("File");
         menuBar.getMenus().add(fileMenu);
+        MenuItem loadItem = new MenuItem("Load");
+        fileMenu.getItems().add(loadItem);
         // fileMenu will have one MenuItem, titled "Exit"
         MenuItem saveItem = new MenuItem("Save");
         fileMenu.getItems().add(saveItem);
@@ -248,6 +261,11 @@ public class Main extends Application
         MenuItem exitItem = new MenuItem("Exit");
         fileMenu.getItems().add(exitItem);
         
+
+        // Load shapes into scene
+        loadItem.setOnAction(event -> {
+        	loadShapes();
+        });
         // Save shapes in scene.
         saveItem.setOnAction(event ->{
         	saveShapes(shapesGroup.getChildren());
@@ -331,6 +349,7 @@ public class Main extends Application
         gridPane.setVgap( 10);
         Button submit = new Button("Submit");
         Button cancel = new Button("Cancel");
+
         VBox vbox = new VBox(10, label, gridPane, shapesColorChoiceBox, submit, cancel);
         vbox.setAlignment(Pos. CENTER);
         vbox.setPadding( new Insets(25));
@@ -456,7 +475,7 @@ public class Main extends Application
         exitItem.setOnAction(event -> {
         primaryStage .close();
         });
-        fileMenu.getItems().add( exitItem);
+        fileMenu.getItems().add(exitItem);
     }
     
     public void saveShapes(ObservableList<Node> children) {
@@ -470,8 +489,9 @@ public class Main extends Application
     	try {
     		FileWriter writer = new FileWriter(file);
     		if(file != null) {
+    			writer.write("SHAPES_3D\r\n");
     			for(int i = 0; i<children.size(); i++){
-    				System.out.print(children.get(i).toString());
+    				System.out.println(children.get(i).toString());
     					if(children.get(i).toString().charAt(0) == 'B') {
     						try {
     							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
@@ -515,7 +535,7 @@ public class Main extends Application
     							
     							writer.write("Cylinder " + position + " " + dimensions + " " + color + " "+ scale + " "+ rotation);
     							writer.write(System.getProperty( "line.separator" ));
-    							
+                  
     						} catch (IOException e) {
     							// TODO Auto-generated catch block
     							e.printStackTrace();
@@ -535,6 +555,84 @@ public class Main extends Application
 
     }
     
+    //
+    public void loadShapes()
+    {
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.getExtensionFilters().add(new ExtensionFilter("Text File", "*.txt"));
+    	fileChooser.setTitle("Loading 3D Shapes");
+    	File file = fileChooser.showSaveDialog(new Stage());
+    	
+    	try {
+    		FileReader reader = new FileReader(file);
+    		if(file != null) {
+    			Scanner scanner = new Scanner(reader.toString());
+    			StringBuilder stringBuilder = new StringBuilder();
+    			String line = null;
+    			boolean validFile = false;
+    			
+    			while(scanner.hasNextLine()) {
+    				line = scanner.nextLine();
+    				if(line.contains("SHAPES_3D"))
+    				{
+    					// Can parse file for info
+    					validFile = true;
+    				}
+    				else if(!validFile)
+    				{
+    					// Do not continue parsing if it is an invalid file
+    					break;
+    				}
+    				
+    				// Clear the shapes from the screen
+    				shapesGroup.getChildren().clear();
+    				
+    				String[] temp = line.split(" ");
+    				
+    				if(temp[0].equals("Sphere"))
+    				{
+    					// 15 total Elements in temp
+    					String[] positions = Arrays.copyOfRange(temp, 1, 3);
+    					double dimensions = Double.parseDouble(temp[4]);
+    					String[] material = Arrays.copyOfRange(temp, 5, 11);
+    					String[] scales = Arrays.copyOfRange(temp, 12, 14);
+    					double rotation = Double.parseDouble(temp[15]);
+    				}
+    				else if(temp[0].equals("Box"))
+    				{
+    					// 18 total Elements in temp
+    					String[] positions = Arrays.copyOfRange(temp, 1, 3);
+    					String[] dimensions = Arrays.copyOfRange(temp, 4, 6);
+    					String[] material = Arrays.copyOfRange(temp, 7, 13);
+    					String[] scales = Arrays.copyOfRange(temp, 14, 16);
+    					double rotation = Double.parseDouble(temp[17]);
+    				}
+    				else if(temp[0].equals("Cylinder"))
+    				{
+    					// 17 total Elements in temp
+    					String[] positions = Arrays.copyOfRange(temp, 1, 3);
+    					String[] dimensions = Arrays.copyOfRange(temp, 4, 5);
+    					String[] material = Arrays.copyOfRange(temp, 6, 12);
+    					String[] scales = Arrays.copyOfRange(temp, 13, 15);
+    					double rotation = Double.parseDouble(temp[16]);
+    				}
+    				else
+    				{
+    					// No more shapes to parse
+    					break;
+    				}
+    			}
+    		}
+
+    		reader.close();
+    		
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+
+    }
+    //
     public String colorDetector(Color color) {
     	
     	if(color.equals(Color.RED)) {
