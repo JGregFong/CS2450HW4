@@ -18,6 +18,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+<<<<<<< HEAD
+=======
+import javafx.scene.control.SeparatorMenuItem;
+>>>>>>> branch 'master' of https://github.com/JGregFong/CS2450HW4.git
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -130,8 +134,6 @@ public class Main extends Application
         horizontalSlider.setMax(360);
         horizontalSlider.valueProperty().addListener((o, oldVal, newVal) ->
         {
-            // rotation.setAxis(Rotate.X_AXIS);
-            // rotation.setAngle((double) newVal);
             xRotate.setAngle((double)newVal);
         });
 
@@ -143,8 +145,6 @@ public class Main extends Application
         verticalSlider.setMax(360);
         verticalSlider.valueProperty().addListener((o, oldVal, newVal) ->
         {
-            // rotation.setAxis(Rotate.Y_AXIS);
-            // rotation.setAngle((double) newVal);
             yRotate.setAngle((double)newVal);
         });
         
@@ -156,8 +156,6 @@ public class Main extends Application
         zSlider.setMax(360);
         zSlider.valueProperty().addListener((o, oldVal, newVal) ->
         {
-            // rotation.setAxis(Rotate.Z_AXIS);
-            // rotation.setAngle((double) newVal) ;
             zRotate.setAngle((double)newVal);
         });
 
@@ -456,7 +454,7 @@ public class Main extends Application
         fileMenu = new Menu("File");
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(event -> {
-        primaryStage .close();
+            primaryStage .close();
         });
         fileMenu.getItems().add(exitItem);
     }
@@ -470,7 +468,9 @@ public class Main extends Application
     	try {
     		FileWriter writer = new FileWriter(file);
     		if(file != null) {
-    			writer.write("SHAPES_3D\r\n");
+                writer.write("SHAPES_3D\r\n");
+                writer.write("BG " + subScene.getFill());
+                writer.write(System.getProperty("line.separator"));
     			for(int i = 0; i<children.size(); i++){
     					if(children.get(i).toString().charAt(0) == 'B') {
     						try {
@@ -625,7 +625,7 @@ public class Main extends Application
                         scale = new Scale();
     					scale.setX(Double.valueOf(scales[0]));
     					scale.setY(Double.valueOf(scales[1]));
-    					scale.setY(Double.valueOf(scales[2]));
+    					scale.setZ(Double.valueOf(scales[2]));
                         rotatex = new Rotate(Double.parseDouble(rotation[0]), Rotate.X_AXIS);
                         rotatey = new Rotate(Double.parseDouble(rotation[1]), Rotate.Y_AXIS);
                         rotatez = new Rotate(Double.parseDouble(rotation[2]), Rotate.Z_AXIS);
@@ -661,7 +661,7 @@ public class Main extends Application
                         scale = new Scale();
     					scale.setX(Double.valueOf(scales[0]));
     					scale.setY(Double.valueOf(scales[1]));
-    					scale.setY(Double.valueOf(scales[2]));
+    					scale.setZ(Double.valueOf(scales[2]));
                         rotatex = new Rotate(Double.parseDouble(rotation[0]), Rotate.X_AXIS);
                         rotatey = new Rotate(Double.parseDouble(rotation[1]), Rotate.Y_AXIS);
                         rotatez = new Rotate(Double.parseDouble(rotation[2]), Rotate.Z_AXIS);
@@ -698,7 +698,7 @@ public class Main extends Application
                         scale = new Scale();
     					scale.setX(Double.valueOf(scales[0]));
     					scale.setY(Double.valueOf(scales[1]));
-    					scale.setY(Double.valueOf(scales[2]));
+    					scale.setZ(Double.valueOf(scales[2]));
                         rotatex = new Rotate(Double.parseDouble(rotation[0]), Rotate.X_AXIS);
                         rotatey = new Rotate(Double.parseDouble(rotation[1]), Rotate.Y_AXIS);
                         rotatez = new Rotate(Double.parseDouble(rotation[2]), Rotate.Z_AXIS);
@@ -707,7 +707,11 @@ public class Main extends Application
     							rotatez, scale);
     					cylinder.setOnMouseClicked(e);
     					shapesList.add(cylinder);
-    				}
+                    }
+                    else if (temp[0].equals("BG")) 
+                    {
+                        subScene.setFill(Color.valueOf(temp[1]));
+                    }
     				
     				if(line.isEmpty())
     				{
