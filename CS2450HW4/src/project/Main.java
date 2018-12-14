@@ -49,6 +49,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
+/*
+ * Johnathan Fong
+ * Fernando Ledesma
+ * David Hau
+ * Michael Wono
+ * 
+ * CS2450.02(F18)
+ * Homework #4
+ */
+
 public class Main extends Application
 {
 	private double scaleVal=1;
