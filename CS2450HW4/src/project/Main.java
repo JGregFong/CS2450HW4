@@ -4,17 +4,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import javafx.animation.RotateTransition;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -22,8 +18,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.*;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -32,7 +26,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -42,7 +35,6 @@ import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.scene.*;
 import javafx.event.*;
@@ -62,7 +54,6 @@ import javafx.stage.Stage;
 
 public class Main extends Application
 {
-	private double scaleVal=1;
 	private double zPos=-60;
 	
     Shape3D selectedShape;
@@ -93,8 +84,6 @@ public class Main extends Application
     Rotate camH = new Rotate(0, Rotate.X_AXIS);
     
     private Menu fileMenu; // Menus will be built in helper methods so make them fields
-    private Menu textMenu;
-
     public static void main(String[] args)
     {
         launch(args);
@@ -266,7 +255,7 @@ public class Main extends Application
         );
         
         addShape.setOnAction(event -> {
-        	Label ls= new Label(shapesChoiceBox.getSelectionModel().getSelectedItem());
+        	new Label(shapesChoiceBox.getSelectionModel().getSelectedItem());
         	createForm(shapesChoiceBox.getSelectionModel().getSelectedItem());
         });
         
