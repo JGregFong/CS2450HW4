@@ -18,10 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-<<<<<<< HEAD
-=======
+
 import javafx.scene.control.SeparatorMenuItem;
->>>>>>> branch 'master' of https://github.com/JGregFong/CS2450HW4.git
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
