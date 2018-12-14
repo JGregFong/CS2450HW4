@@ -597,7 +597,7 @@ public class Main extends Application
 
     			while(scanner.hasNextLine()) {
     				line = scanner.nextLine();
-    				System.out.println(line);
+    				
     				if(line.contains("SHAPES_3D"))
     				{
     					// Can parse file for info
@@ -619,7 +619,6 @@ public class Main extends Application
     				Scale scale;
     				if(temp[0].equals("Sphere"))
     				{
-    					System.out.println("HITS");
     					// 10 total Elements in temp
     					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					double dimensions = Double.parseDouble(temp[4]);
@@ -653,7 +652,6 @@ public class Main extends Application
     				}
     				else if(temp[0].equals("Box"))
     				{
-    					System.out.println("HITB");
     					// 12 total Elements in temp
     					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					String[] dimensions = Arrays.copyOfRange(temp, 4, 7);
@@ -691,7 +689,6 @@ public class Main extends Application
     				}
     				else if(temp[0].equals("Cylinder"))
     				{
-    					System.out.println("HITC");
     					// 11 total Elements in temp
     					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					String[] dimensions = Arrays.copyOfRange(temp, 4, 6);
