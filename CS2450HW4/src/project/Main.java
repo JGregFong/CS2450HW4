@@ -572,6 +572,47 @@ public class Main extends Application
     	fileChooser.getExtensionFilters().add(new ExtensionFilter("Text File", "*.txt"));
     	fileChooser.setTitle("Loading 3D Shapes");
     	File file = fileChooser.showOpenDialog(new Stage());
+    	
+    	EventHandler<Event> e = new EventHandler<Event>(){
+            @Override
+            public void handle(Event event) {
+                if (selectedShape != null) {
+                    selectedShape.getTransforms().clear();
+                    selectedShape.getTransforms().addAll(
+                        translate.clone(),
+                        xRotate.clone(),
+                        yRotate.clone(),
+                        zRotate.clone(),
+                        scale.clone()
+                    );
+                }
+                selectedShape = (Shape3D) event.getSource();
+                
+                if (selectedShape.getTransforms().size() != 0) {
+                    scale = (Scale) selectedShape.getTransforms().get(4);
+                    translate = (Translate) selectedShape.getTransforms().get(0);
+                    xRotate = (Rotate) selectedShape.getTransforms().get(1);
+                    yRotate = (Rotate) selectedShape.getTransforms().get(2);
+                    zRotate = (Rotate) selectedShape.getTransforms().get(3);
+                    selectedShape.getTransforms().clear();
+                } else {
+                    xRotate = new Rotate(0, Rotate.X_AXIS);
+                    yRotate = new Rotate(0, Rotate.Y_AXIS);
+                    zRotate = new Rotate(0, Rotate.Z_AXIS);
+                    scale = new Scale(1, 1, 1);
+                    translate = new Translate();
+                }
+                selectedShape.getTransforms().addAll(translate, xRotate, yRotate, zRotate, scale);
+
+                horizontalSlider.valueProperty().set(xRotate.getAngle());
+                verticalSlider.valueProperty().set(yRotate.getAngle());
+                zSlider.valueProperty().set(zRotate.getAngle());
+                xTranslateSlider.valueProperty().set(translate.getX());
+                yTranslateSlider.valueProperty().set(translate.getY());
+                zTranslateSlider.valueProperty().set(translate.getZ());
+                scaleSldr.valueProperty().set(scale.getX());
+            }
+        };
 
     	try {
     		FileReader reader = new FileReader(file);
@@ -597,7 +638,6 @@ public class Main extends Application
 
     			while(scanner.hasNextLine()) {
     				line = scanner.nextLine();
-    				
     				if(line.contains("SHAPES_3D"))
     				{
     					// Can parse file for info
@@ -648,6 +688,7 @@ public class Main extends Application
     					sphere.setRotate(rotation);
     					sphere.getTransforms().addAll(translate, new Rotate(rotation, Rotate.X_AXIS), new Rotate(rotation, Rotate.Y_AXIS), 
     							new Rotate(rotation, Rotate.Z_AXIS), scale);
+    					sphere.setOnMouseClicked(e);
     					shapesList.add(sphere);
     				}
     				else if(temp[0].equals("Box"))
@@ -684,6 +725,7 @@ public class Main extends Application
     					box.setRotate(rotation);
     					box.getTransforms().addAll(translate, new Rotate(rotation, Rotate.X_AXIS), new Rotate(rotation, Rotate.Y_AXIS), 
     							new Rotate(rotation, Rotate.Z_AXIS), scale);
+    					box.setOnMouseClicked(e);
     					shapesList.add(box);
     					
     				}
@@ -721,6 +763,7 @@ public class Main extends Application
     					cylinder.setRotate(rotation);
     					cylinder.getTransforms().addAll(translate, new Rotate(rotation, Rotate.X_AXIS), new Rotate(rotation, Rotate.Y_AXIS), 
     							new Rotate(rotation, Rotate.Z_AXIS), scale);
+    					cylinder.setOnMouseClicked(e);
     					shapesList.add(cylinder);
     				}
     				
@@ -738,9 +781,9 @@ public class Main extends Application
 
     		reader.close();
     		
-    	} catch (IOException e) {
+    	} catch (IOException exception) {
     		// TODO Auto-generated catch block
-    		e.printStackTrace();
+    		exception.printStackTrace();
     	}
 
     }
