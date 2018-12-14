@@ -23,9 +23,12 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.*;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -68,6 +71,7 @@ public class Main extends Application
     Slider scaleSldr;
 
     Group shapesGroup = new Group();
+    // Rotate rotation = new Rotate();
     Rotate xRotate = new Rotate(0, Rotate.X_AXIS);
     Rotate yRotate = new Rotate(0, Rotate.Y_AXIS);
     Rotate zRotate = new Rotate(0, Rotate.Z_AXIS);
@@ -89,7 +93,7 @@ public class Main extends Application
     @Override
     public void start(Stage primaryStage)
     {
-        subScene = new SubScene(shapesGroup, 510, 400);
+        subScene = new SubScene(shapesGroup, 560, 450);
         subScene.setFill(Color.LAVENDER);
 
         pCam.getTransforms().addAll(camH ,camZ);
@@ -127,6 +131,8 @@ public class Main extends Application
         horizontalSlider.setMax(360);
         horizontalSlider.valueProperty().addListener((o, oldVal, newVal) ->
         {
+            // rotation.setAxis(Rotate.X_AXIS);
+            // rotation.setAngle((double) newVal);
             xRotate.setAngle((double)newVal);
         });
 
@@ -138,6 +144,8 @@ public class Main extends Application
         verticalSlider.setMax(360);
         verticalSlider.valueProperty().addListener((o, oldVal, newVal) ->
         {
+            // rotation.setAxis(Rotate.Y_AXIS);
+            // rotation.setAngle((double) newVal);
             yRotate.setAngle((double)newVal);
         });
         
@@ -149,6 +157,8 @@ public class Main extends Application
         zSlider.setMax(360);
         zSlider.valueProperty().addListener((o, oldVal, newVal) ->
         {
+            // rotation.setAxis(Rotate.Z_AXIS);
+            // rotation.setAngle((double) newVal) ;
             zRotate.setAngle((double)newVal);
         });
 
@@ -272,16 +282,19 @@ public class Main extends Application
         newItem.setOnAction(event -> {
         	shapesGroup.getChildren().clear();
         });
+        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN));
         
         // Load shapes into scene
         loadItem.setOnAction(event -> {
         	loadShapes();
         });
+        loadItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
         
         // Save shapes in scene.
         saveItem.setOnAction(event ->{
         	saveShapes(shapesGroup.getChildren());
         });
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCodeCombination.CONTROL_DOWN));
         
         // Exit the program if the user selects exitItem
         exitItem.setOnAction(event -> {
@@ -374,47 +387,6 @@ public class Main extends Application
             secondary.close();
         });
 
-        EventHandler<Event> e = new EventHandler<Event>(){
-            @Override
-            public void handle(Event event) {
-                if (selectedShape != null) {
-                    selectedShape.getTransforms().clear();
-                    selectedShape.getTransforms().addAll(
-                        translate.clone(),
-                        xRotate.clone(),
-                        yRotate.clone(),
-                        zRotate.clone(),
-                        scale.clone()
-                    );
-                }
-                selectedShape = (Shape3D) event.getSource();
-                
-                if (selectedShape.getTransforms().size() != 0) {
-                    scale = (Scale) selectedShape.getTransforms().get(4);
-                    translate = (Translate) selectedShape.getTransforms().get(0);
-                    xRotate = (Rotate) selectedShape.getTransforms().get(1);
-                    yRotate = (Rotate) selectedShape.getTransforms().get(2);
-                    zRotate = (Rotate) selectedShape.getTransforms().get(3);
-                    selectedShape.getTransforms().clear();
-                } else {
-                    xRotate = new Rotate(0, Rotate.X_AXIS);
-                    yRotate = new Rotate(0, Rotate.Y_AXIS);
-                    zRotate = new Rotate(0, Rotate.Z_AXIS);
-                    scale = new Scale(1, 1, 1);
-                    translate = new Translate();
-                }
-                selectedShape.getTransforms().addAll(translate, xRotate, yRotate, zRotate, scale);
-
-                horizontalSlider.valueProperty().set(xRotate.getAngle());
-                verticalSlider.valueProperty().set(yRotate.getAngle());
-                zSlider.valueProperty().set(zRotate.getAngle());
-                xTranslateSlider.valueProperty().set(translate.getX());
-                yTranslateSlider.valueProperty().set(translate.getY());
-                zTranslateSlider.valueProperty().set(translate.getZ());
-                scaleSldr.valueProperty().set(scale.getX());
-            }
-        };
-
         submit.setOnAction(event -> {
             switch (shape){
                 case "Sphere": {
@@ -496,8 +468,6 @@ public class Main extends Application
     	fileChooser.setTitle("Saving 3D Shapes");
     	File file = fileChooser.showSaveDialog(new Stage());
     	
-
-    	
     	try {
     		FileWriter writer = new FileWriter(file);
     		if(file != null) {
@@ -505,11 +475,16 @@ public class Main extends Application
     			for(int i = 0; i<children.size(); i++){
     					if(children.get(i).toString().charAt(0) == 'B') {
     						try {
-    							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
-    							String dimensions = ((Box) children.get(i)).getHeight() + " " + ((Box) children.get(i)).getWidth() + " " + ((Box) children.get(i)).getDepth();
+                                Box b = (Box) children.get(i);
+                                //Transform list: translate, xRotate, yRotate, zRotate, scale
+                                Translate t = (Translate) b.getTransforms().get(0);
+                                Rotate[] r = new Rotate[] {(Rotate) b.getTransforms().get(1), (Rotate) b.getTransforms().get(2), (Rotate) b.getTransforms().get(3)};
+                                Scale s = (Scale) b.getTransforms().get(4);
+    							String position = (t.getX() + b.getTranslateX()) + " " + (t.getY() + b.getTranslateY()) + " " + (t.getZ() + b.getTranslateZ());
+    							String dimensions = (b.getHeight() + " " + b.getWidth() + " " + b.getDepth());
     							String color = colorDetector(((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor());
-    							String scale = ((Box) children.get(i)).getScaleX() + " "+ ((Box)children.get(i)).getScaleY() + " "+ ((Box)children.get(i)).getScaleZ();
-    							String rotation = Double.toString(((Box)children.get(i)).getRotate());
+                                String scale = s.getX() + " "+ s.getY() + " "+ s.getZ();
+    							String rotation = r[0].getAngle() + " " + r[1].getAngle() + " " + r[2].getAngle();
     									
     							writer.write("Box " + position + " " + dimensions + " " + color + " "+ scale + " "+ rotation );
     							writer.write(System.getProperty( "line.separator" ));
@@ -521,12 +496,17 @@ public class Main extends Application
     					}
     					else if (children.get(i).toString().charAt(0) == 'S') {
     						try {
-    							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
-    							double dimensions = ((Sphere) children.get(i)).getRadius();
+                                Sphere sphere = (Sphere) children.get(i);
+                                //Transform list: translate, xRotate, yRotate, zRotate, scale
+                                Translate t = (Translate) sphere.getTransforms().get(0);
+                                Rotate[] r = new Rotate[] {(Rotate) sphere.getTransforms().get(1), (Rotate) sphere.getTransforms().get(2), (Rotate) sphere.getTransforms().get(3)};
+                                Scale s = (Scale) sphere.getTransforms().get(4);
+                                String position = (t.getX() + sphere.getTranslateX()) + " " + (t.getY() + sphere.getTranslateY()) + " " + (t.getZ() + sphere.getTranslateZ());
+    							double dimensions = sphere.getRadius();
     							String color = colorDetector(((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor());
-    							String scale = ((Sphere) children.get(i)).getScaleX() + " "+ ((Sphere)children.get(i)).getScaleY() + " "+ ((Sphere)children.get(i)).getScaleZ();
-    							String rotation = Double.toString(((Sphere)children.get(i)).getRotate());
-    							
+                                String scale = s.getX() + " "+ s.getY() + " "+ s.getZ();
+    							String rotation = r[0].getAngle() + " " + r[1].getAngle() + " " + r[2].getAngle();
+	
     							writer.write("Sphere " + position + " " + dimensions + " " + color + " "+ scale + " "+ rotation);
     							writer.write(System.getProperty( "line.separator" ));
     							
@@ -537,12 +517,17 @@ public class Main extends Application
     					}
     					else if (children.get(i).toString().charAt(0) == 'C') {
     						try {
-    							String position = children.get(i).getTranslateX() + " " + children.get(i).getTranslateY() + " " + children.get(i).getTranslateZ();
-    							String dimensions = ((Cylinder)children.get(i)).getHeight()+ " " + ((Cylinder) children.get(i)).getRadius();
+                                Cylinder c = (Cylinder) children.get(i);
+                                //Transform list: translate, xRotate, yRotate, zRotate, scale
+                                Translate t = (Translate) c.getTransforms().get(0);
+                                Rotate[] r = new Rotate[] {(Rotate) c.getTransforms().get(1), (Rotate) c.getTransforms().get(2), (Rotate) c.getTransforms().get(3)};
+                                Scale s = (Scale) c.getTransforms().get(4);
+    							String position = (t.getX() + c.getTranslateX()) + " " + (t.getY() + c.getTranslateY()) + " " + (t.getZ() + c.getTranslateZ());
+    							String dimensions = (c.getHeight() + " " + c.getRadius());
     							String color = colorDetector(((PhongMaterial) ((Shape3D) children.get(i)).getMaterial()).getDiffuseColor());
-    							String scale = ((Cylinder) children.get(i)).getScaleX() + " "+ ((Cylinder)children.get(i)).getScaleY() + " "+ ((Cylinder)children.get(i)).getScaleZ();
-    							String rotation = Double.toString(((Cylinder)children.get(i)).getRotate());
-    							
+                                String scale = s.getX() + " "+ s.getY() + " "+ s.getZ();
+    							String rotation = r[0].getAngle() + " " + r[1].getAngle() + " " + r[2].getAngle();
+
     							writer.write("Cylinder " + position + " " + dimensions + " " + color + " "+ scale + " "+ rotation);
     							writer.write(System.getProperty( "line.separator" ));
                   
@@ -572,47 +557,6 @@ public class Main extends Application
     	fileChooser.getExtensionFilters().add(new ExtensionFilter("Text File", "*.txt"));
     	fileChooser.setTitle("Loading 3D Shapes");
     	File file = fileChooser.showOpenDialog(new Stage());
-    	
-    	EventHandler<Event> e = new EventHandler<Event>(){
-            @Override
-            public void handle(Event event) {
-                if (selectedShape != null) {
-                    selectedShape.getTransforms().clear();
-                    selectedShape.getTransforms().addAll(
-                        translate.clone(),
-                        xRotate.clone(),
-                        yRotate.clone(),
-                        zRotate.clone(),
-                        scale.clone()
-                    );
-                }
-                selectedShape = (Shape3D) event.getSource();
-                
-                if (selectedShape.getTransforms().size() != 0) {
-                    scale = (Scale) selectedShape.getTransforms().get(4);
-                    translate = (Translate) selectedShape.getTransforms().get(0);
-                    xRotate = (Rotate) selectedShape.getTransforms().get(1);
-                    yRotate = (Rotate) selectedShape.getTransforms().get(2);
-                    zRotate = (Rotate) selectedShape.getTransforms().get(3);
-                    selectedShape.getTransforms().clear();
-                } else {
-                    xRotate = new Rotate(0, Rotate.X_AXIS);
-                    yRotate = new Rotate(0, Rotate.Y_AXIS);
-                    zRotate = new Rotate(0, Rotate.Z_AXIS);
-                    scale = new Scale(1, 1, 1);
-                    translate = new Translate();
-                }
-                selectedShape.getTransforms().addAll(translate, xRotate, yRotate, zRotate, scale);
-
-                horizontalSlider.valueProperty().set(xRotate.getAngle());
-                verticalSlider.valueProperty().set(yRotate.getAngle());
-                zSlider.valueProperty().set(zRotate.getAngle());
-                xTranslateSlider.valueProperty().set(translate.getX());
-                yTranslateSlider.valueProperty().set(translate.getY());
-                zTranslateSlider.valueProperty().set(translate.getZ());
-                scaleSldr.valueProperty().set(scale.getX());
-            }
-        };
 
     	try {
     		FileReader reader = new FileReader(file);
@@ -650,26 +594,25 @@ public class Main extends Application
     				}
     				
     				// Clear the shapes from the screen
-    				shapesGroup.getChildren().clear();
+                    shapesGroup.getChildren().clear();
+                    selectedShape = null;
     				
-    				String[] temp = line.split(" ");
+                    String[] temp = line.split(" ");
     				
     				Translate translate;
-    				Rotate rotate;
+    				Rotate rotatex, rotatey, rotatez;
     				Scale scale;
     				if(temp[0].equals("Sphere"))
     				{
-    					// 10 total Elements in temp
+    					// 11 total Elements in temp
     					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					double dimensions = Double.parseDouble(temp[4]);
     					String material = temp[5];
     					String[] scales = Arrays.copyOfRange(temp, 6, 9);
-    					double rotation = Double.parseDouble(temp[9]);
+    					String[] rotation = Arrays.copyOfRange(temp, 9, 12);//Double.parseDouble(temp[9]);
     					
     					Sphere sphere = new Sphere(dimensions);
-                        sphere.translateXProperty().set(Double.valueOf(positions[0]));
-                        sphere.translateYProperty().set(Double.valueOf(positions[1]));
-                        sphere.translateZProperty().set(Double.valueOf(positions[2]));
+                        // sphere
                         
                         if (material.equals("green")){
                             sphere.setMaterial(new PhongMaterial(Color.GREEN));
@@ -680,33 +623,32 @@ public class Main extends Application
                         }
                         
                         translate = new Translate(Double.valueOf(positions[0]), Double.valueOf(positions[1]), Double.valueOf(positions[2]));
-    					scale = new Scale();
+                        scale = new Scale();
     					scale.setX(Double.valueOf(scales[0]));
     					scale.setY(Double.valueOf(scales[1]));
     					scale.setY(Double.valueOf(scales[2]));
-    					rotate = new Rotate(rotation, Rotate.X_AXIS);
-    					sphere.setRotate(rotation);
-    					sphere.getTransforms().addAll(translate, new Rotate(rotation, Rotate.X_AXIS), new Rotate(rotation, Rotate.Y_AXIS), 
-    							new Rotate(rotation, Rotate.Z_AXIS), scale);
+                        rotatex = new Rotate(Double.parseDouble(rotation[0]), Rotate.X_AXIS);
+                        rotatey = new Rotate(Double.parseDouble(rotation[1]), Rotate.Y_AXIS);
+                        rotatez = new Rotate(Double.parseDouble(rotation[2]), Rotate.Z_AXIS);
+    					// sphere.setRotate(rotation);
+    					sphere.getTransforms().addAll(translate, rotatex, rotatey, 
+    							rotatez, scale);
     					sphere.setOnMouseClicked(e);
     					shapesList.add(sphere);
     				}
     				else if(temp[0].equals("Box"))
     				{
-    					// 12 total Elements in temp
+    					// 13 total Elements in temp
     					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					String[] dimensions = Arrays.copyOfRange(temp, 4, 7);
     					String material = temp[7];
-    					String[] scales = Arrays.copyOfRange(temp, 8, 11);
-    					double rotation = Double.parseDouble(temp[11]);
+                        String[] scales = Arrays.copyOfRange(temp, 8, 11);
+                        String[] rotation = Arrays.copyOfRange(temp, 11, 14);
+    					// double rotation = Double.parseDouble(temp[11]);
     					
     					Box box = new Box(Double.valueOf(dimensions[0]),
     	                        Double.valueOf(dimensions[1]),
     	                        Double.valueOf(dimensions[2]));
-    					
-    					box.translateXProperty().set(Double.valueOf(positions[0]));
-    					box.translateYProperty().set(Double.valueOf(positions[1]));
-    					box.translateZProperty().set(Double.valueOf(positions[2]));
     					
     					if (material.equals("green")) {
     						box.setMaterial(new PhongMaterial(Color.GREEN));
@@ -717,34 +659,33 @@ public class Main extends Application
     					}
     					
     					translate = new Translate(Double.valueOf(positions[0]), Double.valueOf(positions[1]), Double.valueOf(positions[2]));
-    					scale = new Scale();
+                        scale = new Scale();
     					scale.setX(Double.valueOf(scales[0]));
     					scale.setY(Double.valueOf(scales[1]));
     					scale.setY(Double.valueOf(scales[2]));
-    					rotate = new Rotate(rotation, Rotate.X_AXIS);
-    					box.setRotate(rotation);
-    					box.getTransforms().addAll(translate, new Rotate(rotation, Rotate.X_AXIS), new Rotate(rotation, Rotate.Y_AXIS), 
-    							new Rotate(rotation, Rotate.Z_AXIS), scale);
+                        rotatex = new Rotate(Double.parseDouble(rotation[0]), Rotate.X_AXIS);
+                        rotatey = new Rotate(Double.parseDouble(rotation[1]), Rotate.Y_AXIS);
+                        rotatez = new Rotate(Double.parseDouble(rotation[2]), Rotate.Z_AXIS);
+    					// box.setRotate(rotation);
+    					box.getTransforms().addAll(translate, rotatex, rotatey, 
+    							rotatez, scale);
     					box.setOnMouseClicked(e);
     					shapesList.add(box);
     					
     				}
     				else if(temp[0].equals("Cylinder"))
     				{
-    					// 11 total Elements in temp
+    					// 12 total Elements in temp
     					String[] positions = Arrays.copyOfRange(temp, 1, 4);
     					String[] dimensions = Arrays.copyOfRange(temp, 4, 6);
     					String material = temp[6];
-    					String[] scales = Arrays.copyOfRange(temp, 7, 10);
-    					double rotation = Double.parseDouble(temp[10]);
+                        String[] scales = Arrays.copyOfRange(temp, 7, 10);
+                        String[] rotation = Arrays.copyOfRange(temp, 10, 13);
+    					// double rotation = Double.parseDouble(temp[10]);
     					
     					Cylinder cylinder = new Cylinder(
-    	                        Double.valueOf(dimensions[0]),
-    	                        Double.valueOf(dimensions[1]));
-    					
-    					cylinder.translateXProperty().set(Double.valueOf(positions[0]));
-    					cylinder.translateYProperty().set(Double.valueOf(positions[1]));
-    					cylinder.translateZProperty().set(Double.valueOf(positions[2]));
+    	                        Double.valueOf(dimensions[1]),
+    	                        Double.valueOf(dimensions[0]));
     					
     					if (material.equals("green")) {
     						cylinder.setMaterial(new PhongMaterial(Color.GREEN));
@@ -755,14 +696,16 @@ public class Main extends Application
     					}
     					
     					translate = new Translate(Double.valueOf(positions[0]), Double.valueOf(positions[1]), Double.valueOf(positions[2]));
-    					scale = new Scale();
+                        scale = new Scale();
     					scale.setX(Double.valueOf(scales[0]));
     					scale.setY(Double.valueOf(scales[1]));
     					scale.setY(Double.valueOf(scales[2]));
-    					rotate = new Rotate(rotation, Rotate.X_AXIS);
-    					cylinder.setRotate(rotation);
-    					cylinder.getTransforms().addAll(translate, new Rotate(rotation, Rotate.X_AXIS), new Rotate(rotation, Rotate.Y_AXIS), 
-    							new Rotate(rotation, Rotate.Z_AXIS), scale);
+                        rotatex = new Rotate(Double.parseDouble(rotation[0]), Rotate.X_AXIS);
+                        rotatey = new Rotate(Double.parseDouble(rotation[1]), Rotate.Y_AXIS);
+                        rotatez = new Rotate(Double.parseDouble(rotation[2]), Rotate.Z_AXIS);
+    					// cylinder.setRotate(rotation);
+    					cylinder.getTransforms().addAll(translate, rotatex, rotatey, 
+    							rotatez, scale);
     					cylinder.setOnMouseClicked(e);
     					shapesList.add(cylinder);
     				}
@@ -805,4 +748,44 @@ public class Main extends Application
 
     }
 
+    EventHandler<Event> e = new EventHandler<Event>(){
+        @Override
+        public void handle(Event event) {
+            if (selectedShape != null) {
+                selectedShape.getTransforms().clear();
+                selectedShape.getTransforms().addAll(
+                    translate.clone(),
+                    xRotate.clone(),
+                    yRotate.clone(),
+                    zRotate.clone(),
+                    scale.clone()
+                );
+            }
+            selectedShape = (Shape3D) event.getSource();
+            
+            if (selectedShape.getTransforms().size() != 0) {
+                translate = (Translate) selectedShape.getTransforms().get(0);
+                xRotate = (Rotate) selectedShape.getTransforms().get(1);
+                yRotate = (Rotate) selectedShape.getTransforms().get(2);
+                zRotate = (Rotate) selectedShape.getTransforms().get(3);
+                scale = (Scale) selectedShape.getTransforms().get(4);
+                selectedShape.getTransforms().clear();
+            } else {
+                xRotate = new Rotate(0, Rotate.X_AXIS);
+                yRotate = new Rotate(0, Rotate.Y_AXIS);
+                zRotate = new Rotate(0, Rotate.Z_AXIS);
+                scale = new Scale(1, 1, 1);
+                translate = new Translate();
+            }
+            selectedShape.getTransforms().addAll(translate, xRotate, yRotate, zRotate, scale);
+
+            horizontalSlider.valueProperty().set(xRotate.getAngle());
+            verticalSlider.valueProperty().set(yRotate.getAngle());
+            zSlider.valueProperty().set(zRotate.getAngle());
+            xTranslateSlider.valueProperty().set(translate.getX());
+            yTranslateSlider.valueProperty().set(translate.getY());
+            zTranslateSlider.valueProperty().set(translate.getZ());
+            scaleSldr.valueProperty().set(scale.getX());
+        }
+    };
 }
